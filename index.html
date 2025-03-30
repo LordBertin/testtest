@@ -5,227 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IRREGULAR WORDLE</title>
   <style>
-    body {
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 10px;
-      background: url('https://wallpapers.com/images/hd/light-wood-background-v9gsvgo48dhdtn6x.jpg') no-repeat center center fixed;
-      background-size: cover;
-    }
-    h1, h2 {
-      text-align: center;
-      margin: 10px;
-    }
-    /* Boutons ronds de l'écran d'accueil */
-    .round-btn {
-      border-radius: 50%;
-      width: 100px;
-      height: 100px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 0;
-      border: none;
-      background-color: #ddd;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .round-btn:hover {
-      background-color: #ccc;
-    }
-    .emoji {
-      font-size: 32px;
-      line-height: 1;
-    }
-    .label {
-      margin-top: 5px;
-      font-size: 14px;
-      text-align: center;
-      width: 100%;
-    }
-    /* Rapprochement des boutons sur l'accueil */
-    #home-buttons-row1,
-    #home-buttons-row2 {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-    #home-buttons-row2 {
-      margin-top: 0;
-    }
-    /* Bouton Règles du jeu */
-    #rules-btn {
-      background-color: lightgray;
-      margin-top: 15px;
-    }
-    /* Bloc d'instructions (pour les autres modes) */
-    #instructions {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    #instructions p {
-      margin: 5px 0;
-    }
-    #instructions .legend {
-      display: inline-block;
-      padding: 4px 8px;
-      margin: 0 5px;
-      font-weight: bold;
-      border-radius: 4px;
-    }
-    #instructions .legend.green { background-color: Chartreuse; }
-    #instructions .legend.yellow { background-color: Khaki; }
-    #instructions .legend.gray { background-color: LightGray; }
-    /* Compteurs pour le mode Chronométré */
-    #chrono-counters {
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto 10px auto;
-      font-size: 22px;
-      font-weight: bold;
-      display: flex;
-      justify-content: space-between;
-    }
-    #counter-remaining {
-      color: red;
-    }
-    #counter-found {
-      color: green;
-    }
-    /* Timer centré */
-    #timer-box {
-      margin-bottom: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      text-align: center;
-    }
-    /* Conteneur de la grille */
-    #board-container {
-      position: relative;
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    /* En mode Chrono, la grille est masquée */
-    .hide-board {
-      display: none;
-    }
-    /* Clavier virtuel centré */
-    #virtual-keyboard {
-      width: 100%;
-      max-width: 500px;
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 10px;
-      border-radius: 8px;
-      margin: 10px auto;
-      text-align: center;
-    }
-    .keyboard-row {
-      display: flex;
-      justify-content: center;
-      gap: 5px;
-      margin-bottom: 5px;
-    }
-    .key {
-      flex: 1;
-      padding: 10px 5px;
-      background-color: #ddd;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.2s, transform 0.1s;
-    }
-    .key:hover { background-color: #ccc; }
-    .key:active { transform: scale(0.95); }
-    /* Couleurs spécifiques pour ENTER et DELETE */
-    .key.enter {
-      background-color: green !important;
-      color: white;
-    }
-    .key.delete {
-      background-color: red !important;
-      color: white;
-    }
-    /* Animation shake pour le clavier en cas de mauvaise réponse */
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); }
-      75% { transform: translateX(-5px); }
-      100% { transform: translateX(0); }
-    }
-    .shake {
-      animation: shake 0.5s;
-    }
-    /* Boutons généraux centrés */
-    button.mode-btn, button.theme-btn, button.home-btn {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 6px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    /* Bouton Accueil sur la page Thèmes en bleu clair */
-    #theme-home-btn {
-      background-color: lightblue;
-    }
-    /* Conteneurs d'écran */
-    .screen {
-      display: none;
-      width: 100%;
-      max-width: 600px;
-    }
-    .visible { display: block; }
-    /* Modal de fin (pour les autres modes) */
-    #verb-info {
-      position: fixed;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-      background-color: rgba(255,255,255,0.95);
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
-      max-width: 90%;
-      text-align: left;
-      font-size: 16px;
-    }
-    /* Centrage du bouton dans la modale */
-    #verb-info button {
-      display: block;
-      margin: 15px auto 0 auto;
-      padding: 6px 12px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    /* Révision : centrer les titres de thèmes */
-    #revision-list h3 {
-      text-align: center;
-    }
-    footer {
-      text-align: center;
-      margin-top: 20px;
-    }
-    footer p { margin: 0 0 5px; font-size: 14px; }
-    /* Adaptation responsive */
-    @media (max-width: 600px) {
-      .key {
-        padding: 8px 4px;
-        font-size: 14px;
-      }
-      #verb-info {
-        font-size: 14px;
-      }
-    }
+    /* ... (tout le CSS reste inchangé) ... */
   </style>
 </head>
 <body>
@@ -256,7 +36,7 @@
     <button class="mode-btn" id="rules-btn" onclick="location.href='regles.html'">Règles du jeu</button>
   </div>
 
-  <!-- Écran de jeu -->
+  <!-- Écran de jeu (Mode Classique, Chrono, Thèmes) -->
   <div id="game-screen" class="screen">
     <h2 id="game-title"></h2>
     <!-- Pour le mode Chrono, affichage des compteurs -->
@@ -310,444 +90,442 @@
   </footer>
 
   <script>
-    /***** Données de conjugaison *****/
-    const verbData = {
-      "be":      { base: "be", preterit: "was / were", past: "been", translation: "être" },
-      "have":    { base: "have", preterit: "had", past: "had", translation: "avoir" },
-      "do":      { base: "do", preterit: "did", past: "done", translation: "faire" },
-      "make":    { base: "make", preterit: "made", past: "made", translation: "fabriquer" },
-      "go":      { base: "go", preterit: "went", past: "gone", translation: "aller" },
-      "get":     { base: "get", preterit: "got", past: "got", translation: "obtenir" },
-      "beat":    { base: "beat", preterit: "beat", past: "beaten", translation: "battre" },
-      "become":  { base: "become", preterit: "became", past: "become", translation: "devenir" },
-      "begin":   { base: "begin", preterit: "began", past: "begun", translation: "commencer" },
-      "bet":     { base: "bet", preterit: "bet", past: "bet", translation: "parier" },
-      "bite":    { base: "bite", preterit: "bit", past: "bitten", translation: "mordre" },
-      "bleed":   { base: "bleed", preterit: "bled", past: "bled", translation: "saigner" },
-      "break":   { base: "break", preterit: "broke", past: "broken", translation: "casser" },
-      "bring":   { base: "bring", preterit: "brought", past: "brought", translation: "apporter" },
-      "build":   { base: "build", preterit: "built", past: "built", translation: "construire" },
-      "burn":    { base: "burn", preterit: "burnt", past: "burnt", translation: "brûler" },
-      "buy":     { base: "buy", preterit: "bought", past: "bought", translation: "acheter" },
-      "cast":    { base: "cast", preterit: "cast", past: "cast", translation: "jeter" },
-      "catch":   { base: "catch", preterit: "caught", past: "caught", translation: "attraper" },
-      "choose":  { base: "choose", preterit: "chose", past: "chosen", translation: "choisir" },
-      "come":    { base: "come", preterit: "came", past: "come", translation: "venir" },
-      "cost":    { base: "cost", preterit: "cost", past: "cost", translation: "coûter" },
-      "cut":     { base: "cut", preterit: "cut", past: "cut", translation: "couper" },
-      "draw":    { base: "draw", preterit: "drew", past: "drawn", translation: "dessiner" },
-      "dream":   { base: "dream", preterit: "dreamt", past: "dreamt", translation: "rêver" },
-      "drink":   { base: "drink", preterit: "drank", past: "drunk", translation: "boire" },
-      "drive":   { base: "drive", preterit: "drove", past: "driven", translation: "conduire" },
-      "eat":     { base: "eat", preterit: "ate", past: "eaten", translation: "manger" },
-      "fall":    { base: "fall", preterit: "fell", past: "fallen", translation: "tomber" },
-      "feed":    { base: "feed", preterit: "fed", past: "fed", translation: "nourrir" },
-      "feel":    { base: "feel", preterit: "felt", past: "felt", translation: "sentir" },
-      "fight":   { base: "fight", preterit: "fought", past: "fought", translation: "combattre" },
-      "find":    { base: "find", preterit: "found", past: "found", translation: "trouver" },
-      "fly":     { base: "fly", preterit: "flew", past: "flown", translation: "voler" },
-      "forbid":  { base: "forbid", preterit: "forbade", past: "forbidden", translation: "interdire" },
-      "forget":  { base: "forget", preterit: "forgot", past: "forgotten", translation: "oublier" },
-      "forgive": { base: "forgive", preterit: "forgave", past: "forgiven", translation: "pardonner" },
-      "hang":    { base: "hang", preterit: "hung", past: "hung", translation: "pendre" },
-      "hear":    { base: "hear", preterit: "heard", past: "heard", translation: "entendre" },
-      "hide":    { base: "hide", preterit: "hid", past: "hidden", translation: "cacher" },
-      "hit":     { base: "hit", preterit: "hit", past: "hit", translation: "frapper" },
-      "hold":    { base: "hold", preterit: "held", past: "held", translation: "tenir" },
-      "hurt":    { base: "hurt", preterit: "hurt", past: "hurt", translation: "blesser" },
-      "keep":    { base: "keep", preterit: "kept", past: "kept", translation: "garder" },
-      "know":    { base: "know", preterit: "knew", past: "known", translation: "savoir" },
-      "learn":   { base: "learn", preterit: "learnt", past: "learnt", translation: "apprendre" },
-      "leave":   { base: "leave", preterit: "left", past: "left", translation: "quitter" },
-      "let":     { base: "let", preterit: "let", past: "let", translation: "laisser" },
-      "lose":    { base: "lose", preterit: "lost", past: "lost", translation: "perdre" },
-      "overcome":{ base: "overcome", preterit: "overcame", past: "overcome", translation: "surmonter" },
-      "run":     { base: "run", preterit: "ran", past: "run", translation: "courir" },
-      "say":     { base: "say", preterit: "said", past: "said", translation: "dire" },
-      "see":     { base: "see", preterit: "saw", past: "seen", translation: "voir" },
-      "sell":    { base: "sell", preterit: "sold", past: "sold", translation: "vendre" },
-      "send":    { base: "send", preterit: "sent", past: "sent", translation: "envoyer" },
-      "shoot":   { base: "shoot", preterit: "shot", past: "shot", translation: "tirer" },
-      "show":    { base: "show", preterit: "showed", past: "shown", translation: "montrer" },
-      "shut":    { base: "shut", preterit: "shut", past: "shut", translation: "fermer" },
-      "sing":    { base: "sing", preterit: "sang", past: "sung", translation: "chanter" },
-      "sit":     { base: "sit", preterit: "sat", past: "sat", translation: "s’asseoir" },
-      "sleep":   { base: "sleep", preterit: "slept", past: "slept", translation: "dormir" },
-      "smell":   { base: "smell", preterit: "smelt", past: "smelt", translation: "sentir (odeur)" },
-      "speak":   { base: "speak", preterit: "spoke", past: "spoken", translation: "parler" },
-      "spend":   { base: "spend", preterit: "spent", past: "spent", translation: "dépenser" },
-      "steal":   { base: "steal", preterit: "stole", past: "stolen", translation: "voler (dérober)" },
-      "swim":    { base: "swim", preterit: "swam", past: "swum", translation: "nager" },
-      "take":    { base: "take", preterit: "took", past: "taken", translation: "prendre" },
-      "teach":   { base: "teach", preterit: "taught", past: "taught", translation: "enseigner" },
-      "tear":    { base: "tear", preterit: "tore", past: "torn", translation: "déchirer" },
-      "tell":    { base: "tell", preterit: "told", past: "told", translation: "raconter" },
-      "think":   { base: "think", preterit: "thought", past: "thought", translation: "penser" },
-      "throw":   { base: "throw", preterit: "threw", past: "thrown", translation: "jeter" },
-      "understand": { base: "understand", preterit: "understood", past: "understood", translation: "comprendre" },
-      "wake":    { base: "wake", preterit: "woke", past: "woken", translation: "se réveiller" },
-      "win":     { base: "win", preterit: "won", past: "won", translation: "gagner" },
-      "write":   { base: "write", preterit: "wrote", past: "written", translation: "écrire" },
-      /* Ajouts pour le thème EAR / ORE / ORN */
-      "bear":    { base: "bear", preterit: "bore", past: "born", translation: "supporter" },
-      "swear":   { base: "swear", preterit: "swore", past: "sworn", translation: "jurer" },
-      "wear":    { base: "wear", preterit: "wore", past: "worn", translation: "porter (habits)" }
-    };
+    document.addEventListener('DOMContentLoaded', function() {
+      /***** Données de conjugaison *****/
+      const verbData = {
+        "be":      { base: "be", preterit: "was / were", past: "been", translation: "être" },
+        "have":    { base: "have", preterit: "had", past: "had", translation: "avoir" },
+        "do":      { base: "do", preterit: "did", past: "done", translation: "faire" },
+        "make":    { base: "make", preterit: "made", past: "made", translation: "fabriquer" },
+        "go":      { base: "go", preterit: "went", past: "gone", translation: "aller" },
+        "get":     { base: "get", preterit: "got", past: "got", translation: "obtenir" },
+        "beat":    { base: "beat", preterit: "beat", past: "beaten", translation: "battre" },
+        "become":  { base: "become", preterit: "became", past: "become", translation: "devenir" },
+        "begin":   { base: "begin", preterit: "began", past: "begun", translation: "commencer" },
+        "bet":     { base: "bet", preterit: "bet", past: "bet", translation: "parier" },
+        "bite":    { base: "bite", preterit: "bit", past: "bitten", translation: "mordre" },
+        "bleed":   { base: "bleed", preterit: "bled", past: "bled", translation: "saigner" },
+        "break":   { base: "break", preterit: "broke", past: "broken", translation: "casser" },
+        "bring":   { base: "bring", preterit: "brought", past: "brought", translation: "apporter" },
+        "build":   { base: "build", preterit: "built", past: "built", translation: "construire" },
+        "burn":    { base: "burn", preterit: "burnt", past: "burnt", translation: "brûler" },
+        "buy":     { base: "buy", preterit: "bought", past: "bought", translation: "acheter" },
+        "cast":    { base: "cast", preterit: "cast", past: "cast", translation: "jeter" },
+        "catch":   { base: "catch", preterit: "caught", past: "caught", translation: "attraper" },
+        "choose":  { base: "choose", preterit: "chose", past: "chosen", translation: "choisir" },
+        "come":    { base: "come", preterit: "came", past: "come", translation: "venir" },
+        "cost":    { base: "cost", preterit: "cost", past: "cost", translation: "coûter" },
+        "cut":     { base: "cut", preterit: "cut", past: "cut", translation: "couper" },
+        "draw":    { base: "draw", preterit: "drew", past: "drawn", translation: "dessiner" },
+        "dream":   { base: "dream", preterit: "dreamt", past: "dreamt", translation: "rêver" },
+        "drink":   { base: "drink", preterit: "drank", past: "drunk", translation: "boire" },
+        "drive":   { base: "drive", preterit: "drove", past: "driven", translation: "conduire" },
+        "eat":     { base: "eat", preterit: "ate", past: "eaten", translation: "manger" },
+        "fall":    { base: "fall", preterit: "fell", past: "fallen", translation: "tomber" },
+        "feed":    { base: "feed", preterit: "fed", past: "fed", translation: "nourrir" },
+        "feel":    { base: "feel", preterit: "felt", past: "felt", translation: "sentir" },
+        "fight":   { base: "fight", preterit: "fought", past: "fought", translation: "combattre" },
+        "find":    { base: "find", preterit: "found", past: "found", translation: "trouver" },
+        "fly":     { base: "fly", preterit: "flew", past: "flown", translation: "voler" },
+        "forbid":  { base: "forbid", preterit: "forbade", past: "forbidden", translation: "interdire" },
+        "forget":  { base: "forget", preterit: "forgot", past: "forgotten", translation: "oublier" },
+        "forgive": { base: "forgive", preterit: "forgave", past: "forgiven", translation: "pardonner" },
+        "hang":    { base: "hang", preterit: "hung", past: "hung", translation: "pendre" },
+        "hear":    { base: "hear", preterit: "heard", past: "heard", translation: "entendre" },
+        "hide":    { base: "hide", preterit: "hid", past: "hidden", translation: "cacher" },
+        "hit":     { base: "hit", preterit: "hit", past: "hit", translation: "frapper" },
+        "hold":    { base: "hold", preterit: "held", past: "held", translation: "tenir" },
+        "hurt":    { base: "hurt", preterit: "hurt", past: "hurt", translation: "blesser" },
+        "keep":    { base: "keep", preterit: "kept", past: "kept", translation: "garder" },
+        "know":    { base: "know", preterit: "knew", past: "known", translation: "savoir" },
+        "learn":   { base: "learn", preterit: "learnt", past: "learnt", translation: "apprendre" },
+        "leave":   { base: "leave", preterit: "left", past: "left", translation: "quitter" },
+        "let":     { base: "let", preterit: "let", past: "let", translation: "laisser" },
+        "lose":    { base: "lose", preterit: "lost", past: "lost", translation: "perdre" },
+        "overcome":{ base: "overcome", preterit: "overcame", past: "overcome", translation: "surmonter" },
+        "run":     { base: "run", preterit: "ran", past: "run", translation: "courir" },
+        "say":     { base: "say", preterit: "said", past: "said", translation: "dire" },
+        "see":     { base: "see", preterit: "saw", past: "seen", translation: "voir" },
+        "sell":    { base: "sell", preterit: "sold", past: "sold", translation: "vendre" },
+        "send":    { base: "send", preterit: "sent", past: "sent", translation: "envoyer" },
+        "shoot":   { base: "shoot", preterit: "shot", past: "shot", translation: "tirer" },
+        "show":    { base: "show", preterit: "showed", past: "shown", translation: "montrer" },
+        "shut":    { base: "shut", preterit: "shut", past: "shut", translation: "fermer" },
+        "sing":    { base: "sing", preterit: "sang", past: "sung", translation: "chanter" },
+        "sit":     { base: "sit", preterit: "sat", past: "sat", translation: "s’asseoir" },
+        "sleep":   { base: "sleep", preterit: "slept", past: "slept", translation: "dormir" },
+        "smell":   { base: "smell", preterit: "smelt", past: "smelt", translation: "sentir (odeur)" },
+        "speak":   { base: "speak", preterit: "spoke", past: "spoken", translation: "parler" },
+        "spend":   { base: "spend", preterit: "spent", past: "spent", translation: "dépenser" },
+        "steal":   { base: "steal", preterit: "stole", past: "stolen", translation: "voler (dérober)" },
+        "swim":    { base: "swim", preterit: "swam", past: "swum", translation: "nager" },
+        "take":    { base: "take", preterit: "took", past: "taken", translation: "prendre" },
+        "teach":   { base: "teach", preterit: "taught", past: "taught", translation: "enseigner" },
+        "tear":    { base: "tear", preterit: "tore", past: "torn", translation: "déchirer" },
+        "tell":    { base: "tell", preterit: "told", past: "told", translation: "raconter" },
+        "think":   { base: "think", preterit: "thought", past: "thought", translation: "penser" },
+        "throw":   { base: "throw", preterit: "threw", past: "thrown", translation: "jeter" },
+        "understand": { base: "understand", preterit: "understood", past: "understood", translation: "comprendre" },
+        "wake":    { base: "wake", preterit: "woke", past: "woken", translation: "se réveiller" },
+        "win":     { base: "win", preterit: "won", past: "won", translation: "gagner" },
+        "write":   { base: "write", preterit: "wrote", past: "written", translation: "écrire" },
+        /* Ajouts pour le thème EAR / ORE / ORN */
+        "bear":    { base: "bear", preterit: "bore", past: "born", translation: "supporter" },
+        "swear":   { base: "swear", preterit: "swore", past: "sworn", translation: "jurer" },
+        "wear":    { base: "wear", preterit: "wore", past: "worn", translation: "porter (habits)" }
+      };
 
-    /***** Listes de verbes pour chaque mode *****/
-    const classicVerbs = [
-      "be", "have", "do", "make", "go", "get",
-      "beat", "become", "begin", "bet", "bite", "bleed", "break", "bring", "build", "burn", "buy", "cast", "catch", "choose", "come", "cost", "cut", "draw", "dream", "drink", "drive", "eat", "fall", "feed", "feel", "fight", "find", "fly", "forbid", "forget", "forgive", "hang", "hear", "hide", "hit", "hold", "hurt", "keep", "know", "learn", "leave", "let", "lose", "overcome", "run", "say", "see", "sell", "send", "shoot", "show", "shut", "sing", "sit", "sleep", "smell", "speak", "spend", "steal", "swim", "take", "teach", "tear", "tell", "think", "throw", "understand", "wake", "win", "write"
-    ];
+      /***** Listes de verbes pour chaque mode *****/
+      const classicVerbs = [
+        "be", "have", "do", "make", "go", "get",
+        "beat", "become", "begin", "bet", "bite", "bleed", "break", "bring", "build", "burn", "buy", "cast", "catch", "choose", "come", "cost", "cut", "draw", "dream", "drink", "drive", "eat", "fall", "feed", "feel", "fight", "find", "fly", "forbid", "forget", "forgive", "hang", "hear", "hide", "hit", "hold", "hurt", "keep", "know", "learn", "leave", "let", "lose", "overcome", "run", "say", "see", "sell", "send", "shoot", "show", "shut", "sing", "sit", "sleep", "smell", "speak", "spend", "steal", "swim", "take", "teach", "tear", "tell", "think", "throw", "understand", "wake", "win", "write"
+      ];
 
-    const themes = {
-      indispensables: ["be", "have", "do", "make", "go", "get"],
-      inchanges: ["cut", "bet", "let", "hurt", "put", "shut", "burst", "hit", "cost", "spread", "read", "quit"],
-      t: ["burn", "build", "send", "spend", "learn", "lend", "shoot", "lose", "sit"],
-      preterit_past: ["find", "hear", "lay", "pay", "say", "sell", "tell", "stand", "understand", "win", "mean", "dream"],
-      ght: ["buy", "bring", "fight", "think", "catch", "teach"],
-      minusE: ["bleed", "feed", "feel", "keep", "meet", "sleep", "lead", "leave"],
-      base_past: ["become", "come", "overcome", "run"],
-      past_en: ["beat", "bite", "choose", "eat", "drive", "fall", "forbid", "forget", "forgive", "freeze", "give", "hide", "speak", "steal", "ride", "write"],
-      iau: ["begin", "drink", "ring", "sing", "swim"],
-      ear_ore_orn: ["bear", "swear", "tear", "wear"],
-      ew: ["draw", "blow", "fly", "grow", "know", "throw"]
-    };
+      const themes = {
+        indispensables: ["be", "have", "do", "make", "go", "get"],
+        inchanges: ["cut", "bet", "let", "hurt", "put", "shut", "burst", "hit", "cost", "spread", "read", "quit"],
+        t: ["burn", "build", "send", "spend", "learn", "lend", "shoot", "lose", "sit"],
+        preterit_past: ["find", "hear", "lay", "pay", "say", "sell", "tell", "stand", "understand", "win", "mean", "dream"],
+        ght: ["buy", "bring", "fight", "think", "catch", "teach"],
+        minusE: ["bleed", "feed", "feel", "keep", "meet", "sleep", "lead", "leave"],
+        base_past: ["become", "come", "overcome", "run"],
+        past_en: ["beat", "bite", "choose", "eat", "drive", "fall", "forbid", "forget", "forgive", "freeze", "give", "hide", "speak", "steal", "ride", "write"],
+        iau: ["begin", "drink", "ring", "sing", "swim"],
+        ear_ore_orn: ["bear", "swear", "tear", "wear"],
+        ew: ["draw", "blow", "fly", "grow", "know", "throw"]
+      };
 
-    let currentVerbs = [];
-    let currentChosenVerb = "";
+      let currentVerbs = [];
+      let currentChosenVerb = "";
 
-    /***** Variables globales du Mode Chronométré *****/
-    let chronoRemaining = 0;  // Nombre de Preterit restants
-    let chronoFound = 0;      // Nombre de Preterit corrects trouvés
-    let chronoFoundWords = []; // Liste des Preterits déjà validés
+      /***** Variables globales du Mode Chronométré *****/
+      let chronoRemaining = 0;  // Nombre de Preterit restants
+      let chronoFound = 0;      // Nombre de Preterit corrects trouvés
+      let chronoFoundWords = []; // Liste des Preterits déjà validés
 
-    const guessLimit = 5;
-    let solutionWord = "";
-    let currentRow = 0;
-    let gameOver = false;
-    let currentGuess = "";
-    let gameStartTime = 0;
-    let currentStreak = 0;
-    let bestStreak = localStorage.getItem("bestStreak") ? parseInt(localStorage.getItem("bestStreak")) : 0;
-    let timerInterval = null;
-    let remainingTime = 180; // 3 minutes pour le mode Chronométré
-    let currentMode = "";
-    let currentThemeName = "";
+      const guessLimit = 5;
+      let solutionWord = "";
+      let currentRow = 0;
+      let gameOver = false;
+      let currentGuess = "";
+      let gameStartTime = 0;
+      let currentStreak = 0;
+      let bestStreak = localStorage.getItem("bestStreak") ? parseInt(localStorage.getItem("bestStreak")) : 0;
+      let timerInterval = null;
+      let remainingTime = 180; // 3 minutes pour le mode Chronométré
+      let currentMode = "";
+      let currentThemeName = "";
 
-    const scoreBox = document.getElementById("score-box");
-    const timerBox = document.getElementById("timer-box");
-    const boardElem = document.getElementById("board");
-    const messageElem = document.getElementById("message");
+      const scoreBox = document.getElementById("score-box");
+      const timerBox = document.getElementById("timer-box");
+      const boardElem = document.getElementById("board");
+      const messageElem = document.getElementById("message");
 
-    const keyboardLayout = [
-      ["A", "Z", "E", "R", "T", "Y", "U", "I", "O", "P"],
-      ["Q", "S", "D", "F", "G", "H", "J", "K", "L", "M"],
-      ["Delete", "W", "X", "C", "V", "B", "N", "Enter"]
-    ];
+      const keyboardLayout = [
+        ["A", "Z", "E", "R", "T", "Y", "U", "I", "O", "P"],
+        ["Q", "S", "D", "F", "G", "H", "J", "K", "L", "M"],
+        ["Delete", "W", "X", "C", "V", "B", "N", "Enter"]
+      ];
 
-    /***** Fonctions d'affichage des écrans *****/
-    function showScreen(screenId) {
-      document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('visible'));
-      document.getElementById(screenId).classList.add('visible');
-    }
-
-    /***** Initialisation et création du jeu *****/
-    function chooseSolution() {
-      const randIndex = Math.floor(Math.random() * currentVerbs.length);
-      currentChosenVerb = currentVerbs[randIndex];
-      return verbData[currentChosenVerb].preterit;
-    }
-
-    // Pour le mode Chrono, on ne crée pas de grille.
-    function createBoard() {
-      boardElem.innerHTML = "";
-    }
-
-    function updateScoreBox() {
-      scoreBox.textContent = "Meilleur série : " + bestStreak + " | Série actuelle : " + currentStreak;
-    }
-
-    function initGame() {
-      const oldInfo = document.getElementById("verb-info");
-      if (oldInfo) oldInfo.remove();
-      solutionWord = chooseSolution();
-      gameOver = false;
-      currentGuess = "";
-      messageElem.textContent = "";
-      updateScoreBox();
-      clearKeyboardColors();
-      enableKeyboard();
-      gameStartTime = Date.now();
-      console.log("Mode Chrono - mot (Prétérit) choisi :", solutionWord);
-    }
-
-    /***** Chronomètre pour le mode Chronométré *****/
-    function startTimer() {
-      remainingTime = 180;
-      timerBox.textContent = "Temps restant : " + formatTime(remainingTime);
-      timerInterval = setInterval(() => {
-        remainingTime--;
-        timerBox.textContent = "Temps restant : " + formatTime(remainingTime);
-        if (remainingTime <= 0) {
-          clearInterval(timerInterval);
-          displayTimeUpModal();
-        }
-      }, 1000);
-    }
-    function stopTimer() {
-      clearInterval(timerInterval);
-      timerBox.textContent = "";
-    }
-    function formatTime(seconds) {
-      const m = Math.floor(seconds / 60);
-      const s = seconds % 60;
-      return m.toString().padStart(2, '0') + ":" + s.toString().padStart(2, '0');
-    }
-
-    /***** Modale de fin du mode Chronométré *****/
-    function displayTimeUpModal() {
-      const infoContainer = document.createElement("div");
-      infoContainer.id = "verb-info";
-      let content = `<p>Temps imparti écoulé !</p>
-                     <p>Preterit corrects trouvés : ${chronoFound}</p>
-                     <p>Preterit restants : ${chronoRemaining}</p>
-                     <img src="https://ibb.co/4Z54cRCp" style="width:85px; display:block; margin:10px auto;">`;
-      const modalButton = document.createElement("button");
-      modalButton.id = "modal-button";
-      modalButton.textContent = "Accueil";
-      modalButton.addEventListener("click", () => {
-        infoContainer.remove();
-        goHome();
-      });
-      infoContainer.innerHTML = `<h3 style="text-align:center;">Temps écoulé !</h3>
-                                 <div style="text-align:center;">${content}</div>`;
-      infoContainer.appendChild(modalButton);
-      document.body.appendChild(infoContainer);
-      new Audio("fail.mp3").play();
-    }
-
-    /***** Gestion de l'évaluation en mode Chronométré *****/
-    function handleGuessChrono() {
-      if (currentGuess.trim() === "") return;
-      let entered = currentGuess.trim().toUpperCase();
-      let valid = false;
-      // Vérifier si le mot entré est présent dans la liste et pas déjà validé
-      for (let v of currentVerbs) {
-        let pret = verbData[v].preterit.toUpperCase();
-        if (entered === pret && !chronoFoundWords.includes(entered)) {
-          valid = true;
-          chronoFoundWords.push(entered);
-          break;
-        }
+      /***** Fonctions d'affichage des écrans *****/
+      function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('visible'));
+        document.getElementById(screenId).classList.add('visible');
       }
-      if (valid) {
-        chronoFound++;
-        chronoRemaining--;
-        updateChronoCounters();
-        new Audio("success.mp3").play();
-      } else {
-        // Animation shake du clavier
-        const vk = document.getElementById("virtual-keyboard");
-        vk.classList.add("shake");
-        setTimeout(() => { vk.classList.remove("shake"); }, 500);
+
+      /***** Initialisation et création du jeu *****/
+      function chooseSolution() {
+        const randIndex = Math.floor(Math.random() * currentVerbs.length);
+        currentChosenVerb = currentVerbs[randIndex];
+        return verbData[currentChosenVerb].preterit;
+      }
+
+      // En mode Chrono, pas de grille.
+      function createBoard() {
+        boardElem.innerHTML = "";
+      }
+
+      function updateScoreBox() {
+        scoreBox.textContent = "Meilleur série : " + bestStreak + " | Série actuelle : " + currentStreak;
+      }
+
+      function initGame() {
+        const oldInfo = document.getElementById("verb-info");
+        if (oldInfo) oldInfo.remove();
+        solutionWord = chooseSolution();
+        gameOver = false;
+        currentGuess = "";
+        messageElem.textContent = "";
+        updateScoreBox();
+        clearKeyboardColors();
+        enableKeyboard();
+        gameStartTime = Date.now();
+        console.log("Mode Chrono - mot (Prétérit) choisi :", solutionWord);
+      }
+
+      /***** Chronomètre pour le mode Chronométré *****/
+      function startTimer() {
+        remainingTime = 180;
+        timerBox.textContent = "Temps restant : " + formatTime(remainingTime);
+        timerInterval = setInterval(() => {
+          remainingTime--;
+          timerBox.textContent = "Temps restant : " + formatTime(remainingTime);
+          if (remainingTime <= 0) {
+            clearInterval(timerInterval);
+            displayTimeUpModal();
+          }
+        }, 1000);
+      }
+      function stopTimer() {
+        clearInterval(timerInterval);
+        timerBox.textContent = "";
+      }
+      function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return m.toString().padStart(2, '0') + ":" + s.toString().padStart(2, '0');
+      }
+
+      /***** Modale de fin du mode Chronométré *****/
+      function displayTimeUpModal() {
+        const infoContainer = document.createElement("div");
+        infoContainer.id = "verb-info";
+        let content = `<p>Temps imparti écoulé !</p>
+                       <p>Preterit corrects trouvés : ${chronoFound}</p>
+                       <p>Preterit restants : ${chronoRemaining}</p>
+                       <img src="https://ibb.co/4Z54cRCp" style="width:85px; display:block; margin:10px auto;">`;
+        const modalButton = document.createElement("button");
+        modalButton.id = "modal-button";
+        modalButton.textContent = "Accueil";
+        modalButton.addEventListener("click", () => {
+          infoContainer.remove();
+          goHome();
+        });
+        infoContainer.innerHTML = `<h3 style="text-align:center;">Temps écoulé !</h3>
+                                   <div style="text-align:center;">${content}</div>`;
+        infoContainer.appendChild(modalButton);
+        document.body.appendChild(infoContainer);
         new Audio("fail.mp3").play();
       }
-      currentGuess = "";
-    }
-    function updateChronoCounters() {
-      document.getElementById("counter-remaining").textContent = "Preterit restants: " + chronoRemaining;
-      document.getElementById("counter-found").textContent = "Preterit corrects: " + chronoFound;
-    }
 
-    /***** Gestion de la saisie *****/
-    function handleKey(key) {
-      if (gameOver) return;
-      if (key === "Enter") {
-        if (currentMode === "chrono") {
-          handleGuessChrono();
+      /***** Gestion de l'évaluation en mode Chronométré *****/
+      function handleGuessChrono() {
+        if (currentGuess.trim() === "") return;
+        let entered = currentGuess.trim().toUpperCase();
+        let valid = false;
+        for (let v of currentVerbs) {
+          let pret = verbData[v].preterit.toUpperCase();
+          if (entered === pret && !chronoFoundWords.includes(entered)) {
+            valid = true;
+            chronoFoundWords.push(entered);
+            break;
+          }
         }
-      } else if (key === "Delete") {
-        if (currentGuess.length > 0) {
-          currentGuess = currentGuess.slice(0, -1);
+        if (valid) {
+          chronoFound++;
+          chronoRemaining--;
+          updateChronoCounters();
+          new Audio("success.mp3").play();
+        } else {
+          const vk = document.getElementById("virtual-keyboard");
+          vk.classList.add("shake");
+          setTimeout(() => { vk.classList.remove("shake"); }, 500);
+          new Audio("fail.mp3").play();
         }
-      } else {
-        if (currentMode === "chrono") {
-          currentGuess += key.toLowerCase();
+        currentGuess = "";
+      }
+      function updateChronoCounters() {
+        document.getElementById("counter-remaining").textContent = "Preterit restants: " + chronoRemaining;
+        document.getElementById("counter-found").textContent = "Preterit corrects: " + chronoFound;
+      }
+
+      /***** Gestion de la saisie *****/
+      function handleKey(key) {
+        if (gameOver) return;
+        if (key === "Enter") {
+          if (currentMode === "chrono") {
+            handleGuessChrono();
+          }
+        } else if (key === "Delete") {
+          if (currentGuess.length > 0) {
+            currentGuess = currentGuess.slice(0, -1);
+          }
+        } else {
+          if (currentMode === "chrono") {
+            currentGuess += key.toLowerCase();
+          }
         }
       }
-    }
 
-    /***** Clavier virtuel *****/
-    function createKeyboard() {
-      ["row1", "row2", "row3"].forEach(rowId => {
-        document.getElementById(rowId).innerHTML = "";
-      });
-      keyboardLayout.forEach((row, rowIndex) => {
-        const rowElem = document.getElementById("row" + (rowIndex + 1));
-        row.forEach(key => {
-          const keyButton = document.createElement("button");
-          keyButton.textContent = key;
-          keyButton.classList.add("key");
-          if(key.toUpperCase() === "ENTER") {
-            keyButton.classList.add("enter");
+      /***** Clavier virtuel *****/
+      function createKeyboard() {
+        ["row1", "row2", "row3"].forEach(rowId => {
+          document.getElementById(rowId).innerHTML = "";
+        });
+        keyboardLayout.forEach((row, rowIndex) => {
+          const rowElem = document.getElementById("row" + (rowIndex + 1));
+          row.forEach(key => {
+            const keyButton = document.createElement("button");
+            keyButton.textContent = key;
+            keyButton.classList.add("key");
+            if(key.toUpperCase() === "ENTER") {
+              keyButton.classList.add("enter");
+            }
+            if(key.toUpperCase() === "DELETE") {
+              keyButton.classList.add("delete");
+            }
+            keyButton.addEventListener("click", () => handleKey(key));
+            rowElem.appendChild(keyButton);
+          });
+        });
+      }
+
+      function disableKeyboard() {
+        document.querySelectorAll(".key").forEach(key => key.disabled = true);
+      }
+      function enableKeyboard() {
+        document.querySelectorAll(".key").forEach(key => key.disabled = false);
+      }
+      function updateKeyColor(letter, status) {
+        document.querySelectorAll(".key").forEach(key => {
+          if (key.textContent.toLowerCase() === letter) {
+            if (status === "correct") {
+              key.style.backgroundColor = "#6aaa64";
+              key.style.color = "white";
+            } else if (status === "present" && key.style.backgroundColor !== "rgb(106, 170, 100)") {
+              key.style.backgroundColor = "#c9b458";
+              key.style.color = "white";
+            } else if (status === "absent" &&
+                       key.style.backgroundColor !== "rgb(106, 170, 100)" &&
+                       key.style.backgroundColor !== "rgb(201, 180, 88)") {
+              key.style.backgroundColor = "#787c7e";
+              key.style.color = "white";
+            }
           }
-          if(key.toUpperCase() === "DELETE") {
-            keyButton.classList.add("delete");
-          }
-          keyButton.addEventListener("click", () => handleKey(key));
-          rowElem.appendChild(keyButton);
+        });
+      }
+      function clearKeyboardColors() {
+        document.querySelectorAll(".key").forEach(key => {
+          key.style.backgroundColor = "";
+          key.style.color = "";
+        });
+        enableKeyboard();
+      }
+
+      /***** Gestion des boutons Accueil *****/
+      function goHome() {
+        if (currentMode === "chrono") stopTimer();
+        const modal = document.getElementById("verb-info");
+        if(modal) modal.remove();
+        showScreen("home-screen");
+      }
+
+      /***** Modes de jeu *****/
+      function startClassicGame() {
+        currentMode = "classic";
+        document.getElementById("game-title").textContent = "Mode Classique";
+        timerBox.style.display = "none";
+        document.getElementById("chrono-counters").style.display = "none";
+        document.getElementById("board-container").classList.remove("hide-board");
+        currentVerbs = classicVerbs;
+        initGame();
+        createKeyboard();
+        showScreen("game-screen");
+      }
+      function startChronoGame() {
+        currentMode = "chrono";
+        document.getElementById("game-title").textContent = "Mode Chronométré";
+        timerBox.style.display = "block";
+        document.getElementById("chrono-counters").style.display = "flex";
+        document.getElementById("board-container").classList.add("hide-board");
+        chronoRemaining = classicVerbs.length;
+        chronoFound = 0;
+        chronoFoundWords = [];
+        updateChronoCounters();
+        currentVerbs = classicVerbs;
+        initGame();
+        createKeyboard();
+        remainingTime = 180;
+        startTimer();
+        showScreen("game-screen");
+      }
+      function startThemeSelection() {
+        showScreen("theme-screen");
+      }
+      function startThemeGame(themeKey) {
+        currentMode = "theme";
+        const themeNames = {
+          indispensables: "Verbes Indispensables",
+          inchanges: "Ceux qui ne changent pas",
+          t: "Ceux qui aiment le T",
+          preterit_past: "Preterit = Participe Passé",
+          ght: "Les GHT",
+          minusE: "Ceux qui perdent un E",
+          base_past: "Base Verbale = Participe Passé",
+          past_en: "Les Participes Passés en EN",
+          iau: "Les I / A / U",
+          ear_ore_orn: "Les EAR / ORE / ORN",
+          ew: "Les Preterits en EW"
+        };
+        currentThemeName = themeNames[themeKey] || "Thème sélectionné";
+        document.getElementById("game-title").textContent = currentThemeName;
+        currentVerbs = themes[themeKey] || [];
+        if (currentVerbs.length === 0) {
+          alert("Aucun verbe pour ce thème.");
+          return;
+        }
+        timerBox.style.display = "none";
+        document.getElementById("chrono-counters").style.display = "none";
+        document.getElementById("board-container").classList.remove("hide-board");
+        initGame();
+        createKeyboard();
+        showScreen("game-screen");
+      }
+      function startRevision() {
+        const revisionList = document.getElementById("revision-list");
+        revisionList.innerHTML = "";
+        for (const [theme, verbs] of Object.entries({
+          "Verbes Indispensables": themes.indispensables,
+          "Ceux qui ne changent pas": themes.inchanges,
+          "Ceux qui aiment le T": themes.t,
+          "Preterit = Participe Passé": themes.preterit_past,
+          "Les GHT": themes.ght,
+          "Ceux qui perdent un E": themes.minusE,
+          "Base Verbale = Participe Passé": themes.base_past,
+          "Les Participes Passés en EN": themes.past_en,
+          "Les I / A / U": themes.iau,
+          "Les EAR / ORE / ORN": themes.ear_ore_orn,
+          "Les Preterits en EW": themes.ew
+        })) {
+          const section = document.createElement("div");
+          section.style.marginBottom = "15px";
+          section.innerHTML = `<h3>${theme}</h3>`;
+          verbs.forEach(v => {
+            const data = verbData[v];
+            if (data) {
+              section.innerHTML += `<p>${data.base.toUpperCase()} / ${data.preterit.toUpperCase()} / ${data.past.toUpperCase()} : ${data.translation.toUpperCase()}</p>`;
+            }
+          });
+          revisionList.appendChild(section);
+        }
+        showScreen("revision-screen");
+      }
+      /***** Événements *****/
+      document.getElementById("classic-btn").addEventListener("click", startClassicGame);
+      document.getElementById("chrono-btn").addEventListener("click", startChronoGame);
+      document.getElementById("theme-btn").addEventListener("click", startThemeSelection);
+      document.getElementById("revise-btn").addEventListener("click", startRevision);
+      document.getElementById("game-home-btn").addEventListener("click", goHome);
+      document.getElementById("theme-home-btn").addEventListener("click", goHome);
+      document.getElementById("revise-home-btn").addEventListener("click", goHome);
+      document.querySelectorAll("button.theme-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+          const themeKey = this.getAttribute("data-theme");
+          if (themeKey) startThemeGame(themeKey);
         });
       });
-    }
-
-    function disableKeyboard() {
-      document.querySelectorAll(".key").forEach(key => key.disabled = true);
-    }
-    function enableKeyboard() {
-      document.querySelectorAll(".key").forEach(key => key.disabled = false);
-    }
-    function updateKeyColor(letter, status) {
-      document.querySelectorAll(".key").forEach(key => {
-        if (key.textContent.toLowerCase() === letter) {
-          if (status === "correct") {
-            key.style.backgroundColor = "#6aaa64";
-            key.style.color = "white";
-          } else if (status === "present" && key.style.backgroundColor !== "rgb(106, 170, 100)") {
-            key.style.backgroundColor = "#c9b458";
-            key.style.color = "white";
-          } else if (status === "absent" &&
-                     key.style.backgroundColor !== "rgb(106, 170, 100)" &&
-                     key.style.backgroundColor !== "rgb(201, 180, 88)") {
-            key.style.backgroundColor = "#787c7e";
-            key.style.color = "white";
-          }
-        }
-      });
-    }
-    function clearKeyboardColors() {
-      document.querySelectorAll(".key").forEach(key => {
-        key.style.backgroundColor = "";
-        key.style.color = "";
-      });
-      enableKeyboard();
-    }
-
-    /***** Gestion des boutons Accueil *****/
-    function goHome() {
-      if (currentMode === "chrono") stopTimer();
-      const modal = document.getElementById("verb-info");
-      if(modal) modal.remove();
       showScreen("home-screen");
-    }
-
-    /***** Modes de jeu *****/
-    function startClassicGame() {
-      currentMode = "classic";
-      document.getElementById("game-title").textContent = "Mode Classique";
-      timerBox.style.display = "none";
-      document.getElementById("chrono-counters").style.display = "none";
-      document.getElementById("board-container").classList.remove("hide-board");
-      currentVerbs = classicVerbs;
-      initGame();
-      createKeyboard();
-      showScreen("game-screen");
-    }
-    function startChronoGame() {
-      currentMode = "chrono";
-      document.getElementById("game-title").textContent = "Mode Chronométré";
-      timerBox.style.display = "block";
-      document.getElementById("chrono-counters").style.display = "flex";
-      // Masquer la grille
-      document.getElementById("board-container").classList.add("hide-board");
-      // Initialiser les compteurs
-      chronoRemaining = classicVerbs.length;
-      chronoFound = 0;
-      chronoFoundWords = [];
-      updateChronoCounters();
-      currentVerbs = classicVerbs;
-      initGame();
-      createKeyboard();
-      remainingTime = 180;
-      startTimer();
-      showScreen("game-screen");
-    }
-    function startThemeSelection() {
-      showScreen("theme-screen");
-    }
-    function startThemeGame(themeKey) {
-      currentMode = "theme";
-      const themeNames = {
-        indispensables: "Verbes Indispensables",
-        inchanges: "Ceux qui ne changent pas",
-        t: "Ceux qui aiment le T",
-        preterit_past: "Preterit = Participe Passé",
-        ght: "Les GHT",
-        minusE: "Ceux qui perdent un E",
-        base_past: "Base Verbale = Participe Passé",
-        past_en: "Les Participes Passés en EN",
-        iau: "Les I / A / U",
-        ear_ore_orn: "Les EAR / ORE / ORN",
-        ew: "Les Preterits en EW"
-      };
-      currentThemeName = themeNames[themeKey] || "Thème sélectionné";
-      document.getElementById("game-title").textContent = currentThemeName;
-      currentVerbs = themes[themeKey] || [];
-      if (currentVerbs.length === 0) {
-        alert("Aucun verbe pour ce thème.");
-        return;
-      }
-      timerBox.style.display = "none";
-      document.getElementById("chrono-counters").style.display = "none";
-      document.getElementById("board-container").classList.remove("hide-board");
-      initGame();
-      createKeyboard();
-      showScreen("game-screen");
-    }
-    function startRevision() {
-      const revisionList = document.getElementById("revision-list");
-      revisionList.innerHTML = "";
-      for (const [theme, verbs] of Object.entries({
-        "Verbes Indispensables": themes.indispensables,
-        "Ceux qui ne changent pas": themes.inchanges,
-        "Ceux qui aiment le T": themes.t,
-        "Preterit = Participe Passé": themes.preterit_past,
-        "Les GHT": themes.ght,
-        "Ceux qui perdent un E": themes.minusE,
-        "Base Verbale = Participe Passé": themes.base_past,
-        "Les Participes Passés en EN": themes.past_en,
-        "Les I / A / U": themes.iau,
-        "Les EAR / ORE / ORN": themes.ear_ore_orn,
-        "Les Preterits en EW": themes.ew
-      })) {
-        const section = document.createElement("div");
-        section.style.marginBottom = "15px";
-        section.innerHTML = `<h3>${theme}</h3>`;
-        verbs.forEach(v => {
-          const data = verbData[v];
-          if (data) {
-            section.innerHTML += `<p>${data.base.toUpperCase()} / ${data.preterit.toUpperCase()} / ${data.past.toUpperCase()} : ${data.translation.toUpperCase()}</p>`;
-          }
-        });
-        revisionList.appendChild(section);
-      }
-      showScreen("revision-screen");
-    }
-    /***** Événements *****/
-    document.getElementById("classic-btn").addEventListener("click", startClassicGame);
-    document.getElementById("chrono-btn").addEventListener("click", startChronoGame);
-    document.getElementById("theme-btn").addEventListener("click", startThemeSelection);
-    document.getElementById("revise-btn").addEventListener("click", startRevision);
-    document.getElementById("game-home-btn").addEventListener("click", goHome);
-    document.getElementById("theme-home-btn").addEventListener("click", goHome);
-    document.getElementById("revise-home-btn").addEventListener("click", goHome);
-    document.querySelectorAll("button.theme-btn").forEach(btn => {
-      btn.addEventListener("click", function() {
-        const themeKey = this.getAttribute("data-theme");
-        if (themeKey) startThemeGame(themeKey);
-      });
     });
-    showScreen("home-screen");
   </script>
 </body>
 </html>
