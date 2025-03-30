@@ -5,7 +5,224 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IRREGULAR WORDLE</title>
   <style>
-    /* ... (tout le CSS reste inchangé) ... */
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 10px;
+      background: url('https://wallpapers.com/images/hd/light-wood-background-v9gsvgo48dhdtn6x.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    h1, h2 {
+      text-align: center;
+      margin: 10px;
+    }
+    /* Boutons ronds de l'écran d'accueil */
+    .round-btn {
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      border: none;
+      background-color: #ddd;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .round-btn:hover {
+      background-color: #ccc;
+    }
+    .emoji {
+      font-size: 32px;
+      line-height: 1;
+    }
+    .label {
+      margin-top: 5px;
+      font-size: 14px;
+      text-align: center;
+      width: 100%;
+    }
+    /* Rapprochement des boutons d'accueil */
+    #home-buttons-row1,
+    #home-buttons-row2 {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    #home-buttons-row2 {
+      margin-top: 0;
+    }
+    /* Bouton Règles du jeu */
+    #rules-btn {
+      background-color: lightgray;
+      margin-top: 15px;
+    }
+    /* Bloc d'instructions et de score (pour Mode Classique et Thèmes) */
+    #info-block {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    #info-block p {
+      margin: 3px 0;
+    }
+    /* Légendes */
+    .legend {
+      display: inline-block;
+      padding: 4px 8px;
+      margin: 0 5px;
+      font-weight: bold;
+      border-radius: 4px;
+    }
+    .legend.green { background-color: Chartreuse; }
+    .legend.yellow { background-color: Khaki; }
+    .legend.gray { background-color: LightGray; }
+    /* Score-box (inclus dans info-block pour Mode Classique et Thèmes) */
+    #score-box {
+      font-weight: bold;
+    }
+    /* Compteurs pour le mode Chronométré */
+    #chrono-counters {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto 10px auto;
+      font-size: 22px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+    #counter-remaining { color: red; }
+    #counter-found { color: green; }
+    /* Timer centré */
+    #timer-box {
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+    /* Zone d'écriture en mode Chrono */
+    #typed-entry {
+      border: 1px solid #ccc;
+      padding: 8px;
+      margin-bottom: 10px;
+      width: 90%;
+      max-width: 500px;
+      font-size: 18px;
+      text-align: center;
+      background-color: #fff;
+    }
+    /* Conteneur de la grille */
+    #board-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    /* En mode Chrono, la grille est masquée */
+    .hide-board { display: none; }
+    /* Clavier virtuel centré */
+    #virtual-keyboard {
+      width: 100%;
+      max-width: 500px;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px auto;
+      text-align: center;
+    }
+    .keyboard-row {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-bottom: 5px;
+    }
+    .key {
+      flex: 1;
+      padding: 10px 5px;
+      background-color: #ddd;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    .key:hover { background-color: #ccc; }
+    .key:active { transform: scale(0.95); }
+    .key.enter {
+      background-color: green !important;
+      color: white;
+    }
+    .key.delete {
+      background-color: red !important;
+      color: white;
+    }
+    /* Animation shake pour le clavier */
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    .shake { animation: shake 0.5s; }
+    /* Boutons généraux centrés */
+    button.mode-btn, button.theme-btn, button.home-btn {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 6px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    /* Bouton Accueil sur la page Thèmes en bleu clair */
+    #theme-home-btn { background-color: lightblue; }
+    /* Conteneurs d'écran */
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 600px;
+    }
+    .visible { display: block; }
+    /* Modal de fin (pour les autres modes) */
+    #verb-info {
+      position: fixed;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      background-color: rgba(255,255,255,0.95);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+      max-width: 90%;
+      text-align: left;
+      font-size: 16px;
+    }
+    #verb-info button {
+      display: block;
+      margin: 15px auto 0 auto;
+      padding: 6px 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    /* Révision : centrer les titres de thèmes */
+    #revision-list h3 { text-align: center; }
+    footer {
+      text-align: center;
+      margin-top: 20px;
+    }
+    footer p { margin: 0 0 5px; font-size: 14px; }
+    @media (max-width: 600px) {
+      .key { padding: 8px 4px; font-size: 14px; }
+      #verb-info { font-size: 14px; }
+    }
   </style>
 </head>
 <body>
@@ -36,17 +253,29 @@
     <button class="mode-btn" id="rules-btn" onclick="location.href='regles.html'">Règles du jeu</button>
   </div>
 
-  <!-- Écran de jeu (Mode Classique, Chrono, Thèmes) -->
+  <!-- Écran de jeu -->
   <div id="game-screen" class="screen">
     <h2 id="game-title"></h2>
+    <!-- Pour les modes Classique et Thèmes, affichage du bloc d'instructions et de score -->
+    <div id="info-block">
+      <p style="font-size: 16px;">Tu n'as que 5 essais, alors réfléchis bien</p>
+      <p>
+        <span class="legend green"><strong>Lettre bien placée</strong></span>
+        <span class="legend yellow"><strong>Lettre mal placée</strong></span>
+        <span class="legend gray"><strong>Lettre absente</strong></span>
+      </p>
+      <p id="score-box">Meilleur série : 0 | Série actuelle : 0</p>
+    </div>
     <!-- Pour le mode Chrono, affichage des compteurs -->
     <div id="chrono-counters" style="display:none;">
       <div id="counter-remaining">Preterit restants: 0</div>
       <div id="counter-found">Preterit corrects: 0</div>
     </div>
     <div id="timer-box">Temps restant : 03:00</div>
-    <!-- En mode Chrono, la grille est masquée -->
-    <div id="board-container" class="hide-board">
+    <!-- Zone d'écriture en mode Chrono -->
+    <div id="typed-entry" style="display:none;"></div>
+    <!-- En mode Classique et Thèmes, la grille est affichée -->
+    <div id="board-container">
       <div id="board"></div>
     </div>
     <div id="virtual-keyboard">
@@ -79,7 +308,7 @@
   <div id="revision-screen" class="screen">
     <h2>Révision des verbes irréguliers</h2>
     <div id="revision-list" style="max-height:400px; overflow-y:auto; background:rgba(255,255,255,0.9); padding:10px; border-radius:8px;">
-      <!-- Le contenu sera généré dynamiquement -->
+      <!-- Contenu généré dynamiquement -->
     </div>
     <button class="home-btn" id="revise-home-btn">Accueil</button>
   </div>
@@ -220,6 +449,7 @@
       const timerBox = document.getElementById("timer-box");
       const boardElem = document.getElementById("board");
       const messageElem = document.getElementById("message");
+      const typedEntry = document.getElementById("typed-entry");
 
       const keyboardLayout = [
         ["A", "Z", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -246,7 +476,9 @@
       }
 
       function updateScoreBox() {
-        scoreBox.textContent = "Meilleur série : " + bestStreak + " | Série actuelle : " + currentStreak;
+        if(scoreBox) {
+          scoreBox.textContent = "Meilleur série : " + bestStreak + " | Série actuelle : " + currentStreak;
+        }
       }
 
       function initGame() {
@@ -260,6 +492,10 @@
         clearKeyboardColors();
         enableKeyboard();
         gameStartTime = Date.now();
+        // En mode Chrono, mettre à jour la zone d'écriture
+        if(currentMode === "chrono" && typedEntry) {
+          typedEntry.textContent = "";
+        }
         console.log("Mode Chrono - mot (Prétérit) choisi :", solutionWord);
       }
 
@@ -333,6 +569,8 @@
           new Audio("fail.mp3").play();
         }
         currentGuess = "";
+        // Mettre à jour la zone d'écriture
+        if(typedEntry) typedEntry.textContent = "";
       }
       function updateChronoCounters() {
         document.getElementById("counter-remaining").textContent = "Preterit restants: " + chronoRemaining;
@@ -349,10 +587,16 @@
         } else if (key === "Delete") {
           if (currentGuess.length > 0) {
             currentGuess = currentGuess.slice(0, -1);
+            if(currentMode === "chrono" && typedEntry) {
+              typedEntry.textContent = currentGuess;
+            }
           }
         } else {
           if (currentMode === "chrono") {
             currentGuess += key.toLowerCase();
+            if(typedEntry) {
+              typedEntry.textContent = currentGuess;
+            }
           }
         }
       }
@@ -368,12 +612,8 @@
             const keyButton = document.createElement("button");
             keyButton.textContent = key;
             keyButton.classList.add("key");
-            if(key.toUpperCase() === "ENTER") {
-              keyButton.classList.add("enter");
-            }
-            if(key.toUpperCase() === "DELETE") {
-              keyButton.classList.add("delete");
-            }
+            if(key.toUpperCase() === "ENTER") { keyButton.classList.add("enter"); }
+            if(key.toUpperCase() === "DELETE") { keyButton.classList.add("delete"); }
             keyButton.addEventListener("click", () => handleKey(key));
             rowElem.appendChild(keyButton);
           });
@@ -426,9 +666,14 @@
         document.getElementById("game-title").textContent = "Mode Classique";
         timerBox.style.display = "none";
         document.getElementById("chrono-counters").style.display = "none";
+        // Pour les modes Classique et Thèmes, afficher la grille et le bloc info
         document.getElementById("board-container").classList.remove("hide-board");
+        document.getElementById("info-block").style.display = "block";
+        // Masquer la zone d'écriture en mode Chrono
+        typedEntry.style.display = "none";
         currentVerbs = classicVerbs;
         initGame();
+        createBoard(); // Affiche la grille
         createKeyboard();
         showScreen("game-screen");
       }
@@ -437,7 +682,12 @@
         document.getElementById("game-title").textContent = "Mode Chronométré";
         timerBox.style.display = "block";
         document.getElementById("chrono-counters").style.display = "flex";
+        // En mode Chrono, on masque la grille et le bloc info
         document.getElementById("board-container").classList.add("hide-board");
+        document.getElementById("info-block").style.display = "none";
+        // Afficher la zone d'écriture pour voir les lettres tapées
+        typedEntry.style.display = "block";
+        // Initialiser les compteurs
         chronoRemaining = classicVerbs.length;
         chronoFound = 0;
         chronoFoundWords = [];
@@ -476,8 +726,13 @@
         }
         timerBox.style.display = "none";
         document.getElementById("chrono-counters").style.display = "none";
+        // En mode Thèmes, afficher la grille et le bloc info
         document.getElementById("board-container").classList.remove("hide-board");
+        document.getElementById("info-block").style.display = "block";
+        // Masquer la zone d'écriture (utilisée uniquement en Chrono)
+        typedEntry.style.display = "none";
         initGame();
+        createBoard();
         createKeyboard();
         showScreen("game-screen");
       }
