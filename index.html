@@ -38,7 +38,7 @@
       flex-direction: column;
       align-items: center;
     }
-    /* Boutons d'accueil sous forme de cercles disposés sur 2 lignes */
+    /* Boutons d'accueil sous forme de cercles, disposés sur 2 lignes */
     .button-row {
       display: flex;
       justify-content: center;
@@ -77,7 +77,7 @@
       cursor: pointer;
       margin-top: 20px;
     }
-    /* --- Écran de jeu (commun aux modes Classique et Thèmes) --- */
+    /* --- Écran de jeu (pour Mode Classique et Sélection de thèmes) --- */
     #game-screen {
       margin: 0 auto;
     }
@@ -252,6 +252,7 @@
         <div class="circle">✅</div>
         <span>Mode Classique</span>
       </a>
+      <!-- Bouton Mode Chronométré redirige vers une page externe -->
       <a href="chrono.html" class="mode-button" id="chrono-btn">
         <div class="circle">⏳</div>
         <span>Mode Chronométré</span>
@@ -271,7 +272,7 @@
     <button class="rules-btn" id="rules-btn" onclick="window.location.href='regles.html'">Règles du jeu</button>
   </div>
 
-  <!-- Écran de jeu (Mode Classique et sélection de thèmes) -->
+  <!-- Écran de jeu (pour Mode Classique et sélection de thèmes) -->
   <div id="game-screen" class="screen">
     <h2 id="game-title"></h2>
     <div id="instructions">
@@ -761,17 +762,6 @@
       showScreen("game-screen");
     }
 
-    function startChronoGame() {
-      currentMode = "chrono";
-      document.getElementById("game-title").textContent = "Mode Chronométré";
-      timerBox.style.display = "block";
-      currentVerbs = classicVerbs;
-      initGame();
-      createKeyboardGame();
-      startTimer();
-      showScreen("game-screen");
-    }
-
     function startThemeSelection() {
       showScreen("theme-screen");
     }
@@ -839,11 +829,7 @@
       e.preventDefault();
       startClassicGame();
     });
-    document.getElementById("chrono-btn").addEventListener("click", function(e) {
-      // Mode Chronométré reste accessible via chrono.html ou via sa fonction ici
-      e.preventDefault();
-      startChronoGame();
-    });
+    // Le bouton Chronométré redirige directement vers chrono.html (déjà défini dans l'anchor)
     document.getElementById("theme-btn").addEventListener("click", function(e) {
       e.preventDefault();
       startThemeSelection();
